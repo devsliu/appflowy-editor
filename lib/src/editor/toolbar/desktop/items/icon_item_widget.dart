@@ -51,7 +51,9 @@ class SVGIconItemWidget extends StatelessWidget {
     return SizedBox(
       width: size.width,
       height: size.height,
-      child: child,
+      // Without the IconButton wrapper the tight constraints would stretch the
+      // raw svg to the full cell size; Center keeps it at its natural size.
+      child: onPressed != null ? child : Center(child: child),
     );
   }
 }

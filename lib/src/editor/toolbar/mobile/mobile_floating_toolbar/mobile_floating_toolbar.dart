@@ -127,13 +127,10 @@ class _MobileFloatingToolbarState extends State<MobileFloatingToolbar>
     } else if (selection.isCollapsed) {
       if (_isToolbarVisible) {
         _clear();
-      } else if (prevSelection == selection &&
-          editorState.selectionUpdateReason == SelectionUpdateReason.uiEvent &&
-          editorState.selectionExtraInfo?[
-                  selectionExtraInfoDisableFloatingToolbar] !=
-              true) {
-        _showAfterDelay();
       }
+      // Don't show the toolbar for collapsed selections (cursor only).
+      // Tapping the same position twice would pop the toolbar and block
+      // the soft keyboard — the user almost always wants to type.
       prevSelection = selection;
     } else {
       _clear();
@@ -146,8 +143,13 @@ class _MobileFloatingToolbarState extends State<MobileFloatingToolbar>
       }
 
       if (editorState
-              .selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] !=
+                  .selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] !=
+              true &&
+          editorState
+                  .selectionExtraInfo?[selectionExtraInfoDisableToolbar] !=
           true) {
+        // Also respect the desktop disable-toolbar flag so that programmatic
+        // selection changes (e.g. search highlight) don't pop up the toolbar.
         _showAfterDelay();
       }
     }

@@ -11,26 +11,31 @@ ToolbarItem buildTextColorItem({
     isActive: onlyShowInTextType,
     builder: (context, editorState, highlightColor, iconColor, tooltipBuilder) {
       String? textColorHex;
-      final selection = editorState.selection!;
-      final nodes = editorState.getNodesInSelection(selection);
-      final isHighlight = nodes.allSatisfyInSelection(selection, (delta) {
-        if (delta.everyAttributes((attr) => attr.isEmpty)) {
-          return false;
-        }
+      final selection = editorState.selection;
+      final nodes = selection != null ? editorState.getNodesInSelection(selection) : <Node>[];
+      final isHighlight = selection != null &&
+          nodes.allSatisfyInSelection(selection, (delta) {
+            if (delta.everyAttributes((attr) => attr.isEmpty)) {
+              return false;
+            }
 
-        return delta.everyAttributes((attr) {
-          textColorHex = attr[AppFlowyRichTextKeys.textColor];
+            return delta.everyAttributes((attr) {
+              textColorHex = attr[AppFlowyRichTextKeys.textColor];
 
-          return (textColorHex != null);
-        });
-      });
+              return (textColorHex != null);
+            });
+          });
 
       final child = SVGIconItemWidget(
         iconName: 'toolbar/text_color',
         isHighlight: isHighlight,
         highlightColor: highlightColor,
         iconColor: iconColor,
+        // Keep onPressed non-null even without a selection: a null callback
+        // skips the IconButton wrapper and the raw svg gets stretched to the
+        // full 30x30 cell, making the icon look bigger.
         onPressed: () {
+          if (selection == null) return;
           bool showClearButton = false;
           nodes.allSatisfyInSelection(
             selection,
@@ -38,9 +43,7 @@ ToolbarItem buildTextColorItem({
               if (!showClearButton) {
                 showClearButton = delta.whereType<TextInsert>().any(
                   (element) {
-                    return element
-                            .attributes?[AppFlowyRichTextKeys.textColor] !=
-                        null;
+                    return element.attributes?[AppFlowyRichTextKeys.textColor] != null;
                   },
                 );
               }
