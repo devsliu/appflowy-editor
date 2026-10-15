@@ -166,6 +166,12 @@ class _ScrollServiceWidgetState extends State<ScrollServiceWidget>
         final scrollDuration =
             isDragOperation ? const Duration(milliseconds: 2) : Duration.zero;
 
+        // Non-drag selection changes (typing, newline, tap): size the drag
+        // target to the selection rect itself so scrolling only kicks in when
+        // the cursor is actually (partially) offscreen — independent of the
+        // global autoScrollEdgeOffset, which apps may set to 0 to disable
+        // edge auto-scroll on mobile.
+
         // soft keyboard
         // workaround: wait for the soft keyboard to show up
         final keyboardDelay = KeyboardHeightObserver.currentKeyboardHeight == 0
@@ -180,7 +186,9 @@ class _ScrollServiceWidgetState extends State<ScrollServiceWidget>
           // Don't skip even if already scrolling, because direction may have changed
           startAutoScroll(
             endTouchPoint,
-            edgeOffset: editorState.autoScrollEdgeOffset,
+            edgeOffset: isDragOperation
+                ? editorState.autoScrollEdgeOffset
+                : targetRect.height * 2,
             direction: direction,
             duration: scrollDuration,
           );
