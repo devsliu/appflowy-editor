@@ -129,7 +129,9 @@ class _MobileFloatingToolbarState extends State<MobileFloatingToolbar>
         _clear();
       } else if (prevSelection == selection &&
           editorState.selectionUpdateReason == SelectionUpdateReason.uiEvent &&
-          editorState.selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] != true) {
+          editorState.selectionExtraInfo?[
+                  selectionExtraInfoDisableFloatingToolbar] !=
+              true) {
         _showAfterDelay();
       }
       prevSelection = selection;
@@ -144,10 +146,8 @@ class _MobileFloatingToolbarState extends State<MobileFloatingToolbar>
       }
 
       if (editorState
-                  .selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] !=
+              .selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] !=
           true) {
-        // Also respect the desktop disable-toolbar flag so that programmatic
-        // selection changes (e.g. search highlight) don't pop up the toolbar.
         _showAfterDelay();
       }
     }
