@@ -145,9 +145,6 @@ class _MobileFloatingToolbarState extends State<MobileFloatingToolbar>
 
       if (editorState
                   .selectionExtraInfo?[selectionExtraInfoDisableFloatingToolbar] !=
-              true &&
-          editorState
-                  .selectionExtraInfo?[selectionExtraInfoDisableToolbar] !=
           true) {
         // Also respect the desktop disable-toolbar flag so that programmatic
         // selection changes (e.g. search highlight) don't pop up the toolbar.
