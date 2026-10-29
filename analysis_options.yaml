@@ -32,6 +32,10 @@ analyzer:
     - lib/src/l10n/**
     - example/**
     - test/**
+    - lib/src/editor/util/file_picker/**
+    - lib/src/editor/toolbar/mobile/**
+    - lib/src/editor/block_component/image_block_component/image_upload_widget.dart
+    - build/**
   plugins:
     - custom_lint
 

@@ -111,7 +111,7 @@ class _UploadImageMenuState extends State<UploadImageMenu> {
 
   final _textEditingController = TextEditingController();
   final _focusNode = FocusNode();
-  final _filePicker = FilePicker();
+  final _filePicker = AppFlowyFilePicker();
 
   // this value is either a path or base64 content
   // if the app is running on web, it will be base64 content
@@ -335,11 +335,10 @@ class _UploadImageMenuState extends State<UploadImageMenu> {
               dialogTitle: '',
               type: kIsWeb ? fp.FileType.custom : fp.FileType.image,
               allowedExtensions: kIsWeb ? allowedExtensions : null,
-              withData: kIsWeb,
             );
             if (result != null && result.files.isNotEmpty) {
+              final bytes = await result.files.first.readAsBytes();
               setState(() {
-                final bytes = result.files.first.bytes;
                 if (kIsWeb && bytes != null) {
                   _imagePathOrContent = base64String(bytes);
                 } else {
