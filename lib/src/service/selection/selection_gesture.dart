@@ -86,9 +86,8 @@ class SelectionGestureDetectorState extends State<SelectionGestureDetector> {
                 ..onEnd = widget.onPanEnd;
             },
           ),
-        TapGestureRecognizer:
-            GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-          () => TapGestureRecognizer(),
+        _ResilientTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<_ResilientTapGestureRecognizer>(
+          () => _ResilientTapGestureRecognizer(),
           (recognizer) {
             recognizer.onTapDown = _tapDownDelegate;
             recognizer.onSecondaryTapDown = widget.onSecondaryTapDown;
@@ -170,5 +169,24 @@ class _ImmediateDrag extends Drag {
   @override
   void end(DragEndDetails details) {
     onEnd?.call(details);
+  }
+}
+
+/// A [TapGestureRecognizer] that recovers from a stale pointer sequence left
+/// unresolved (e.g. a native Windows file picker swallows the pointer up/cancel
+/// events, leaving the recognizer stuck tracking an old pointer id). When a new
+/// pointer down arrives on a different id, force-rejects the stale one so the
+/// recognizer can transition back to [GestureRecognizerState.ready] and accept
+/// the new pointer normally.
+class _ResilientTapGestureRecognizer extends TapGestureRecognizer {
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    if (state != GestureRecognizerState.ready && primaryPointer != event.pointer) {
+      resolve(GestureDisposition.rejected);
+      if (primaryPointer != null) {
+        stopTrackingPointer(primaryPointer!);
+      }
+    }
+    super.addAllowedPointer(event);
   }
 }

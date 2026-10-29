@@ -7,9 +7,9 @@ final ToolbarItem quoteItem = ToolbarItem(
   group: 3,
   isActive: onlyShowInSingleSelectionAndTextType,
   builder: (context, editorState, highlightColor, iconColor, tooltipBuilder) {
-    final selection = editorState.selection!;
-    final node = editorState.getNodeAtPath(selection.start.path)!;
-    final isHighlight = node.type == 'quote';
+    final selection = editorState.selection;
+    final node = selection != null ? editorState.getNodeAtPath(selection.start.path) : null;
+    final isHighlight = node?.type == 'quote';
     final child = SVGIconItemWidget(
       iconName: 'toolbar/quote',
       isHighlight: isHighlight,

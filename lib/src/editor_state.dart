@@ -181,6 +181,18 @@ class EditorState {
 
   /// Sets the selection of the editor.
   set selection(Selection? value) {
+    // Block nodes (image, table, divider) have no text delta. Any selection
+    // whose endpoint lands on one triggers Android's InputConnection to
+    // deadlock; on desktop it's still a semantic no-op. Reject all such
+    // selections so every caller (tap, long-press, transaction, search,
+    // copy-paste) is covered regardless of platform.
+    if (value != null) {
+      final endNode = getNodeAtPath(value.end.path);
+      if (endNode != null && endNode.delta == null) {
+        return;
+      }
+    }
+
     // clear the toggled style when the selection is changed.
     if (selectionNotifier.value != value) {
       _toggledStyle.clear();

@@ -17,11 +17,13 @@ class _HeadingToolbarItem extends ToolbarItem {
             iconColor,
             tooltipBuilder,
           ) {
-            final selection = editorState.selection!;
-            final node = editorState.getNodeAtPath(selection.start.path)!;
+            final selection = editorState.selection;
+            final node = selection != null
+                ? editorState.getNodeAtPath(selection.start.path)
+                : null;
             final isHighlight =
-                node.type == 'heading' && node.attributes['level'] == level;
-            final delta = (node.delta ?? Delta()).toJson();
+                node?.type == 'heading' && node?.attributes['level'] == level;
+            final delta = (node?.delta ?? Delta()).toJson();
             final child = SVGIconItemWidget(
               iconName: 'toolbar/h$level',
               isHighlight: isHighlight,
