@@ -105,7 +105,9 @@ class _ResizableImageState extends State<ResizableImage> {
 
     return Stack(
       children: [
-        child,
+        // AbsorbPointer 只包住图片本体，阻止它触发编辑器的 selection
+        // 手势系统；edge resize handles 留在外面，能收到 horizontal drag。
+        AbsorbPointer(child: child),
         if (widget.editable) ...[
           _buildEdgeGesture(
             context,
