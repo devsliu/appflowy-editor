@@ -631,6 +631,21 @@ class _MobileSelectionServiceWidgetState
   void _onTapUpIOS(TapUpDetails details) {
     final offset = details.globalPosition;
 
+    // Notify interceptors (e.g. keyboard service needs to request focus).
+    final canTap = _interceptors.every(
+      (element) => element.canTap?.call(
+            TapDownDetails(
+              globalPosition: offset,
+              localPosition: details.localPosition,
+              kind: details.kind,
+            ),
+          ) ??
+          true,
+    );
+    if (!canTap) {
+      return;
+    }
+
     // if the tap happens on a selection area, don't change the selection
     if (_isClickOnSelectionArea(offset)) {
       appFlowyEditorOnTapSelectionArea.add(0);
@@ -743,6 +758,21 @@ class _MobileSelectionServiceWidgetState
 
   void _onTapUpAndroid(TapUpDetails details) {
     final offset = details.globalPosition;
+
+    // Notify interceptors (e.g. keyboard service needs to request focus).
+    final canTap = _interceptors.every(
+      (element) => element.canTap?.call(
+            TapDownDetails(
+              globalPosition: offset,
+              localPosition: details.localPosition,
+              kind: details.kind,
+            ),
+          ) ??
+          true,
+    );
+    if (!canTap) {
+      return;
+    }
 
     clearSelection();
 
